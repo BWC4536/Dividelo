@@ -39,11 +39,12 @@ export async function POST(
       throw Errors.CONFLICT("You are already a member of this group");
     }
 
+    const sessionUser = session.user!;
     const result = await db.$transaction(async (tx) => {
       const member = await tx.groupMember.create({
         data: {
           groupId: params.groupId,
-          userId: session.user.id,
+          userId: sessionUser.id as string,
           role: "member",
         },
         include: {
@@ -65,7 +66,7 @@ export async function POST(
           userId: invite.createdById,
           type: "member_joined",
           title: "Nuevo miembro",
-          message: `${session.user.name ?? session.user.email} se ha unido al grupo ${invite.group.name}`,
+          message: `${sessionUser.name ?? sessionUser.email} se ha unido al grupo ${invite.group.name}`,
           data: JSON.stringify({ groupId: params.groupId }),
         },
       });

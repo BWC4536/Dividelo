@@ -132,10 +132,11 @@ export async function POST(
       });
 
       // Notify all group members except the creator
+      const sessionUser = session.user!;
       const members = await tx.groupMember.findMany({
         where: {
           groupId: params.groupId,
-          userId: { not: session.user.id },
+          userId: { not: sessionUser.id },
         },
         select: { userId: true },
       });
@@ -146,7 +147,7 @@ export async function POST(
             userId: m.userId,
             type: "new_expense",
             title: "Nuevo gasto",
-            message: `${session.user.name ?? session.user.email} añadió "${data.title}" por ${data.amount} ${data.currency}`,
+            message: `${sessionUser.name ?? sessionUser.email} añadió "${data.title}" por ${data.amount} ${data.currency}`,
             data: JSON.stringify({ groupId: params.groupId, expenseId: newExpense.id }),
           })),
         });

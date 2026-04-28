@@ -69,6 +69,7 @@ export async function POST(
     if (!payerMember) throw Errors.BAD_REQUEST("Payer is not a group member");
     if (!receiverMember) throw Errors.BAD_REQUEST("Receiver is not a group member");
 
+    const sessionUser = session.user!;
     const settlement = await db.$transaction(async (tx) => {
       const newSettlement = await tx.settlement.create({
         data: {
@@ -91,13 +92,13 @@ export async function POST(
       });
 
       // Notify the receiver
-      if (data.receiverId !== session.user.id) {
+      if (data.receiverId !== sessionUser.id) {
         await tx.notification.create({
           data: {
             userId: data.receiverId,
             type: "settlement",
             title: "Pago recibido",
-            message: `${session.user.name ?? session.user.email} te ha pagado ${data.amount} ${data.currency}`,
+            message: `${sessionUser.name ?? sessionUser.email} te ha pagado ${data.amount} ${data.currency}`,
             data: JSON.stringify({ groupId: params.groupId, settlementId: newSettlement.id }),
           },
         });
