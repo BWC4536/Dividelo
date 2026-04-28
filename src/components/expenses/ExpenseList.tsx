@@ -49,7 +49,7 @@ export function ExpenseList({
       if (!map.has(dateKey)) map.set(dateKey, []);
       map.get(dateKey)!.push(expense);
     }
-    return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+    return Array.from(map.entries()).sort((a, b) => b[0].localeCompare(a[0]));
   }, [expenses]);
 
   if (isLoading) {

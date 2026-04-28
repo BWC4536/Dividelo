@@ -18,11 +18,17 @@ export function useNotifications() {
 
   const unreadCount = (data ?? []).filter((n) => !n.read).length;
 
+  const markAllRead = async () => {
+    await fetch("/api/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ readAll: true }) });
+    await mutate("/api/notifications");
+  };
+
   return {
     notifications: data ?? [],
     unreadCount,
     isLoading,
     error,
+    markAllRead,
   };
 }
 

@@ -48,7 +48,7 @@ export function SplitEditor({
   // Compute equal splits whenever selected members or total changes
   useEffect(() => {
     if (mode === "equal") {
-      const selected = [...selectedMembers];
+      const selected = Array.from(selectedMembers);
       if (selected.length === 0) {
         onChange([]);
         return;
